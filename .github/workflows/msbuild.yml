@@ -24,11 +24,14 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
+    - name: Download WDK Installer
+      run: |
+        curl -L -o wdksetup.exe "https://go.microsoft.com/fwlink/?linkid=2243392"
+
     - name: Install WDK
       run: |
-        choco install windows-driver-kit -y
-      # Or download and install a specific version:
-      #   Use Microsoft's official WDK installer with silent flags if needed
+        Start-Process -FilePath .\wdksetup.exe -ArgumentList "/q" -Wait
+      shell: pwsh
 
     - name: Build ARM64 Driver
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} ${{env.PROJECT_FILE_PATH}}
